@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>CarTest.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+#include &lt;gtest/gtest.h&gt;
+#include "../src/Car.h"
+
+class CarTest : public ::testing::Test {
+protected:
+    Car car;
+
+<span style = "background-color:#dfd">    CarTest() : car() {}</span>
+};
+
+<span style = "background-color:#dfd">TEST_F(CarTest, SelectPart_CarType) {
+    car.selectPart(CarType_Q, 1);
+    EXPECT_EQ(car.getCarType(), CarType::SEDAN);
+    car.selectPart(CarType_Q, 2);
+    EXPECT_EQ(car.getCarType(), CarType::SUV);
+    car.selectPart(CarType_Q, 3);
+    EXPECT_EQ(car.getCarType(), CarType::TRUCK);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, SelectPart_Engine) {
+    car.selectPart(Engine_Q, 1);
+    EXPECT_EQ(car.getEngineType(), EngineType::GM);
+    car.selectPart(Engine_Q, 2);
+    EXPECT_EQ(car.getEngineType(), EngineType::TOYOTA);
+    car.selectPart(Engine_Q, 3);
+    EXPECT_EQ(car.getEngineType(), EngineType::WIA);
+    car.selectPart(Engine_Q, 4);
+    EXPECT_EQ(car.getEngineType(), EngineType::MALFUNCTION);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, SelectPart_Brake) {
+    car.selectPart(BrakeSystem_Q, 1);
+    EXPECT_EQ(car.getBrakeSystemType(), BrakeSystemType::MANDO);
+    car.selectPart(BrakeSystem_Q, 2);
+    EXPECT_EQ(car.getBrakeSystemType(), BrakeSystemType::CONTINENTAL);
+    car.selectPart(BrakeSystem_Q, 3);
+    EXPECT_EQ(car.getBrakeSystemType(), BrakeSystemType::BOSCH);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, SelectPart_Steering) {
+    car.selectPart(SteeringSystem_Q, 1);
+    EXPECT_EQ(car.getSteeringSystemType(), SteeringSystemType::BOSCH);
+    car.selectPart(SteeringSystem_Q, 2);
+    EXPECT_EQ(car.getSteeringSystemType(), SteeringSystemType::MOBIS);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, IsValid_AllValid) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    EXPECT_TRUE(car.isValid());
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, IsValid_Sedan_Continental) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::CONTINENTAL);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    EXPECT_FALSE(car.isValid());
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, IsValid_SUV_Toyota) {
+    car.setCarType(CarType::SUV);
+    car.setEngineType(EngineType::TOYOTA);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    EXPECT_FALSE(car.isValid());
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, IsValid_Truck_WIA) {
+    car.setCarType(CarType::TRUCK);
+    car.setEngineType(EngineType::WIA);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    EXPECT_FALSE(car.isValid());
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, IsValid_Truck_Mando) {
+    car.setCarType(CarType::TRUCK);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    EXPECT_FALSE(car.isValid());
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, IsValid_BoschBrake_NotBoschSteer) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::BOSCH);
+    car.setSteeringSystemType(SteeringSystemType::MOBIS);
+    EXPECT_FALSE(car.isValid());
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, RunProducedCar_Valid) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.runProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("ÀÚµ¿Â÷°¡ µ¿ÀÛµË´Ï´Ù."), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, RunProducedCar_Invalid) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::CONTINENTAL);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.runProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("ÀÚµ¿Â÷°¡ µ¿ÀÛµÇÁö ¾Ê½À´Ï´Ù"), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, RunProducedCar_Malfunction) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::MALFUNCTION);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.runProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("¿£ÁøÀÌ °íÀå³ªÀÖ½À´Ï´Ù."), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, TestProducedCar_Pass) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.testProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("PASS"), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, TestProducedCar_Fail_SedanContinental) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::CONTINENTAL);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.testProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Sedan¿¡´Â ContinentalÁ¦µ¿ÀåÄ¡ »ç¿ë ºÒ°¡"), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, TestProducedCar_Fail_SUVToyota) {
+    car.setCarType(CarType::SUV);
+    car.setEngineType(EngineType::TOYOTA);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.testProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("SUV¿¡´Â TOYOTA¿£Áø »ç¿ë ºÒ°¡"), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, TestProducedCar_Fail_TruckWIA) {
+    car.setCarType(CarType::TRUCK);
+    car.setEngineType(EngineType::WIA);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.testProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Truck¿¡´Â WIA¿£Áø »ç¿ë ºÒ°¡"), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, TestProducedCar_Fail_TruckMando) {
+    car.setCarType(CarType::TRUCK);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::MANDO);
+    car.setSteeringSystemType(SteeringSystemType::BOSCH);
+    testing::internal::CaptureStdout();
+    car.testProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Truck¿¡´Â MandoÁ¦µ¿ÀåÄ¡ »ç¿ë ºÒ°¡"), std::string::npos);
+}</span>
+
+<span style = "background-color:#dfd">TEST_F(CarTest, TestProducedCar_Fail_BoschBrakeNotBoschSteer) {
+    car.setCarType(CarType::SEDAN);
+    car.setEngineType(EngineType::GM);
+    car.setBrakeSystemType(BrakeSystemType::BOSCH);
+    car.setSteeringSystemType(SteeringSystemType::MOBIS);
+    testing::internal::CaptureStdout();
+    car.testProducedCar();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("BoschÁ¦µ¿ÀåÄ¡¿¡´Â BoschÁ¶ÇâÀåÄ¡ ÀÌ¿Ü »ç¿ë ºÒ°¡"), std::string::npos);
+}</span></pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>
