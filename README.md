@@ -9,4 +9,4 @@ D4 : O\n
 D5 : 0\n
 
 코드 커버리지
-![Alt text](/codecoverage.png "코드 커버리지")
+![코드 커버리지](/codecoverage.PNG "코드 커버리지")
