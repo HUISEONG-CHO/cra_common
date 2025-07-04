@@ -9,4 +9,4 @@ D4 : O\n
 D5 : 0\n
 
 코드 커버리지
-![image](https://github.com/user-attachments/assets/09768c80-7a46-49af-80ea-59b32fccb51c)
+![Alt text](/codecoverage.png "코드 커버리지")
